@@ -69,6 +69,17 @@ const config: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'rivalix-indol.vercel.app',
+          },
+        ],
+        destination: 'https://rivalix.xyz/:path*',
+        permanent: true,
+      },
+      {
         source: '/docs/my-account/affiliate-program',
         destination: '/docs/my-account/rewards',
         permanent: true,
