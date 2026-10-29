@@ -324,7 +324,7 @@ async function createSyncCron(sql: ReservedSql, options: SyncCronOptions): Promi
 async function createSyncEventsCron(sql: ReservedSql, siteUrl: string, cronSecret: string): Promise<void> {
   await createSyncCron(sql, {
     jobName: 'sync-events',
-    schedule: '2,11,20,29,38,47,56 * * * *',
+    schedule: '2,32 * * * *',
     endpointPath: '/api/sync/events',
     siteUrl,
     cronSecret,
@@ -334,7 +334,7 @@ async function createSyncEventsCron(sql: ReservedSql, siteUrl: string, cronSecre
 async function createSyncVolumeCron(sql: ReservedSql, siteUrl: string, cronSecret: string): Promise<void> {
   await createSyncCron(sql, {
     jobName: 'sync-volume-enqueue',
-    schedule: '*/10 * * * *',
+    schedule: '10,40 * * * *',
     endpointPath: '/api/sync/volume/enqueue',
     siteUrl,
     cronSecret,
@@ -357,7 +357,7 @@ async function createSyncVolumeCron(sql: ReservedSql, siteUrl: string, cronSecre
 
   await createSyncCron(sql, {
     jobName: 'sync-volume',
-    schedule: '*/5 * * * *',
+    schedule: '*/15 * * * *',
     endpointPath: '/api/sync/volume',
     siteUrl,
     cronSecret,
@@ -377,7 +377,7 @@ async function createSyncVolumeCron(sql: ReservedSql, siteUrl: string, cronSecre
 async function createSyncTranslationsCron(sql: ReservedSql, siteUrl: string, cronSecret: string): Promise<void> {
   await createSyncCron(sql, {
     jobName: 'sync-translations-enqueue',
-    schedule: '3,12,21,30,39,48,57 * * * *',
+    schedule: '3 * * * *',
     endpointPath: '/api/sync/translations/enqueue',
     siteUrl,
     cronSecret,
@@ -420,7 +420,7 @@ async function createSyncTranslationsCron(sql: ReservedSql, siteUrl: string, cro
 
   await createSyncCron(sql, {
     jobName: 'sync-translations',
-    schedule: '* * * * *',
+    schedule: '*/10 * * * *',
     endpointPath: '/api/sync/translations',
     siteUrl,
     cronSecret,
@@ -499,7 +499,7 @@ async function createSyncTranslationsCron(sql: ReservedSql, siteUrl: string, cro
 async function createSyncResolutionCron(sql: ReservedSql, siteUrl: string, cronSecret: string): Promise<void> {
   await createSyncCron(sql, {
     jobName: 'sync-resolution',
-    schedule: '5-55/10 * * * *',
+    schedule: '5,20,35,50 * * * *',
     endpointPath: '/api/sync/resolution',
     siteUrl,
     cronSecret,
@@ -520,7 +520,7 @@ async function createSyncResolutionCron(sql: ReservedSql, siteUrl: string, cronS
 async function createSyncSportsScoresCron(sql: ReservedSql, siteUrl: string, cronSecret: string): Promise<void> {
   await createSyncCron(sql, {
     jobName: 'sync-sports-scores',
-    schedule: '* * * * *',
+    schedule: '*/5 * * * *',
     endpointPath: '/api/sync/sports-scores',
     siteUrl,
     cronSecret,
