@@ -69,6 +69,14 @@ const config: NextConfig = {
   async redirects() {
     return [
       {
+        // Vercel also serves production on the default .vercel.app domain. Wallet
+        // scanners flag the mismatch with AppKit's metadata.url (SITE_URL) as phishing.
+        source: '/:path*',
+        has: [{ type: 'host', value: 'rivalix-umber.vercel.app' }],
+        destination: 'https://rivalix.xyz/:path*',
+        permanent: true,
+      },
+      {
         source: '/docs/my-account/affiliate-program',
         destination: '/docs/my-account/rewards',
         permanent: true,
