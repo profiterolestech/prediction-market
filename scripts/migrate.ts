@@ -314,7 +314,42 @@ async function createCleanJobsCron(sql: ReservedSql): Promise<void> {
   console.log('✅ Cron clean-jobs created successfully')
 }
 
+// Optional comma-separated allowlist of sync cron job names (e.g. "sync-events,sync-resolution").
+// Unset or empty schedules every job; jobs left out are unscheduled so they stop invoking functions.
+function resolveEnabledSyncCronJobs(): Set<string> | null {
+  const names = (process.env.SYNC_CRON_JOBS ?? '')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean)
+  return names.length > 0 ? new Set(names) : null
+}
+
+const enabledSyncCronJobs = resolveEnabledSyncCronJobs()
+
+async function unscheduleCron(sql: ReservedSql, jobName: string): Promise<void> {
+  const escapedJobName = escapeSqlLiteral(jobName)
+  const sqlQuery = `
+  DO $$
+  DECLARE
+    job_id int;
+  BEGIN
+    SELECT jobid INTO job_id FROM cron.job WHERE jobname = '${escapedJobName}';
+
+    IF job_id IS NOT NULL THEN
+      PERFORM cron.unschedule(job_id);
+    END IF;
+  END $$;`
+
+  await sql.unsafe(sqlQuery, []).simple()
+}
+
 async function createSyncCron(sql: ReservedSql, options: SyncCronOptions): Promise<void> {
+  if (enabledSyncCronJobs && !enabledSyncCronJobs.has(options.jobName)) {
+    await unscheduleCron(sql, options.jobName)
+    console.log(`⏭️ Cron ${options.jobName} disabled by SYNC_CRON_JOBS`)
+    return
+  }
+
   const sqlQuery = buildSyncCronSql(options)
   console.log(`Creating ${options.jobName} cron job...`)
   await sql.unsafe(sqlQuery, []).simple()
