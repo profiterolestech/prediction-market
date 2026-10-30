@@ -319,7 +319,7 @@ async function createCleanJobsCron(sql: ReservedSql): Promise<void> {
 function resolveEnabledSyncCronJobs(): Set<string> | null {
   const names = (process.env.SYNC_CRON_JOBS ?? '')
     .split(',')
-    .map(name => name.trim())
+    .map((name) => name.trim())
     .filter(Boolean)
   return names.length > 0 ? new Set(names) : null
 }
@@ -328,7 +328,7 @@ const enabledSyncCronJobs = resolveEnabledSyncCronJobs()
 
 async function unscheduleCron(sql: ReservedSql, jobName: string): Promise<void> {
   const escapedJobName = escapeSqlLiteral(jobName)
-  await sql.unsafe(`
+  const sqlQuery = `
   DO $$
   DECLARE
     job_id int;
@@ -338,7 +338,9 @@ async function unscheduleCron(sql: ReservedSql, jobName: string): Promise<void> 
     IF job_id IS NOT NULL THEN
       PERFORM cron.unschedule(job_id);
     END IF;
-  END $$;`, []).simple()
+  END $$;`
+
+  await sql.unsafe(sqlQuery, []).simple()
 }
 
 async function createSyncCron(sql: ReservedSql, options: SyncCronOptions): Promise<void> {
